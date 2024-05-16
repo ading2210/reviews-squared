@@ -4,19 +4,25 @@
     "description": "For indecisive people too lazy to read the reviews",
     "version": "1.0",
     "icons": {
-      "16": "frontend/imgs/random-16.png",
-      "32": "frontend/imgs/random-32.png",
-      "48": "frontend/imgs/random-48.png",
-      "128": "frontend/imgs/random-128.png"
+      "16": "imgs/random-16.png",
+      "32": "imgs/random-32.png",
+      "48": "imgs/random-48.png",
+      "128": "imgs/random-128.png"
     },
     "content_scripts": [
       {
         "js": [
-          "frontend/contentscript.js"
+          "contentscript.js"
         ],
         "matches": [
           "https://www.amazon.com/*"
         ]
+      }
+    ],
+    "web_accessible_resources" : [
+      {
+        "resources" : ["iframe.html"],
+        "matches" : ["https://www.amazon.com/*"]
       }
     ]
 }
