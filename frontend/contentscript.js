@@ -2,7 +2,7 @@ const txt = 'Hello world!'; // replace w/ the ai generated text ltr
 const host_name = location.hostname;
 const path = btoa(location.href);
 const marieAntoinette = {
-    "www.amazon.com" : ["cr-product-insights-cards", ],
+  "www.amazon.com" : ["cr-product-insights-cards", ],
 }
 
 const iframe = document.createElement("iframe");
