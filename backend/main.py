@@ -6,17 +6,20 @@ from flask import Flask, request, make_response, jsonify
 import scraper.amazon
 
 Settings.embed_model = OllamaEmbedding(model_name="nomic-embed-text")
-Settings.llm = Ollama(model="llama3:8b", request_timeout=360.0)
+Settings.llm = Ollama(model="llama3:instruct", request_timeout=360.0)
 app = Flask(__name__)
 
-def generate(documents):
+def generate(query, reviews):
   print("creating documents")
-  documents = [Document(text=text) for text in ["hello world"]]
+  documents = []
+  for review in reviews:
+    text = review.pop("text")
+    documents.append(Document(text=text, metadata=review))
   index = VectorStoreIndex.from_documents(documents)
 
   print("running query")
   query_engine = index.as_query_engine()
-  response = query_engine.query("test")
+  response = query_engine.query(query)
   return str(response) #note: possible to get sources used from the response object
 
 @app.route("/")
@@ -26,7 +29,7 @@ def index():
 @app.route("/api/generate", methods=["POST"])
 def api_generate():
   content = request.json
-  llm_response = generate(content)
+  llm_response = generate(content["query"], content["documents"])
   response = make_response(llm_response, 200)
   response.mimetype = "text/plain"
   return response
