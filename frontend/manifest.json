@@ -21,7 +21,7 @@
     ],
     "web_accessible_resources" : [
       {
-        "resources" : ["iframe.html"],
+        "resources" : ["iframe.html", "iframe.js"],
         "matches" : ["https://www.amazon.com/*"]
       }
     ]
