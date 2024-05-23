@@ -21,22 +21,17 @@ def get_reviews(url):
 
   response = httpx.get(url, headers=headers)
   document = lxml.html.fromstring(response.content)
-  review_divs = document.cssselect('div[id^="customer_review-"]')
+  review_divs = document.cssselect('li[class="review-item"]')
   review_data = []
   
   for review_div in review_divs:
-    #since our user agent is random, sometimes we get the mobile version of the page
-    title_spans = review_div.cssselect('span[data-hook="review-title"]')
-    title_links = review_div.cssselect('a[data-hook="review-title"]')
-    if title_spans:
-      title_text = title_spans[0].text_content().strip()
-    else:
-      title_text = title_links[0].text_content().strip().split("\n")[-1].strip()
+    title_h4 = review_div.cssselect('h4.review-title')[0]
+    title_text = title_h4.text_content().strip()
     
-    stars_span = review_div.cssselect('span.a-icon-alt')[0]
-    stars_rating = float(stars_span.text_content().strip().split()[0])
-    body_span = review_div.cssselect('span[data-hook="review-body"]')[-1]
-    body_text = body_span.text_content().strip()
+    stars_p = review_div.cssselect('p.visually-hidden')[0]
+    stars_rating = float(stars_p.text_content().strip().split()[1])
+    body_div = review_div.cssselect('div.ugc-review-body')[0]
+    body_text = body_div.text_content().strip()
 
     review_data.append({
       "title": title_text,
@@ -47,5 +42,5 @@ def get_reviews(url):
   return review_data
 
 if __name__ == "__main__":
-  url = "https://www.amazon.com/ASUS-Gaming-GeForce-Graphics-DisplayPort/product-reviews/B0C7JYX6LN"
+  url = "https://www.bestbuy.com/site/reviews/gigabyte-nvidia-geforce-rtx-3060-12gb-gddr6-pci-express-4-0-graphics-card-black/6468931"
   print(get_reviews(url))
