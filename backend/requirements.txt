@@ -2,5 +2,6 @@ llama-index
 llama-index-llms-ollama
 llama-index-embeddings-ollama
 flask
-bs4
-curl_cffi
+lxml
+httpx
+cssselect
