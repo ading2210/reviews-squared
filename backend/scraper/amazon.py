@@ -1,50 +1,52 @@
 import httpx
 import lxml.html
+from flask import Flask, request, jsonify
+from flask_cors import CORS
+import undetected_chromedriver as uc
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
-import user_agents
+# Replace 'your_openai_api_key' with your actual OpenAI API key
+openai.api_key = 'your_openai_api_key'
 
+app = Flask(__name__)
+CORS(app)
 
-def get_reviews(url):
-  headers = {
-    "User-Agent": user_agents.get_random(),
-    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/jxl,image/webp,*/*;q=0.8",
-    "Accept-Language": "en-US,en;q=0.5",
-    "Accept-Encoding": "gzip, deflate, br",
-    "DNT": "1",
-    "Connection": "keep-alive",
-    "Upgrade-Insecure-Requests": "1",
-    "Sec-Fetch-Dest": "document",
-    "Sec-Fetch-Mode": "navigate",
-    "Sec-Fetch-Site": "none",
-    "Sec-Fetch-User": "?1",
-  }
+def get_reviews_from_page(url):
+    options = uc.ChromeOptions()
+    options.add_argument('--headless')
+    options.add_argument('--no-sandbox')
+    options.add_argument('--disable-dev-shm-usage')
 
-  response = httpx.get(url, headers=headers)
-  document = lxml.html.fromstring(response.content)
-  review_divs = document.cssselect('div[id^="customer_review-"]')
-  review_data = []
-  
-  for review_div in review_divs:
-    #since our user agent is random, sometimes we get the mobile version of the page
-    title_spans = review_div.cssselect('span[data-hook="review-title"]')
-    title_links = review_div.cssselect('a[data-hook="review-title"]')
-    if title_spans:
-      title_text = title_spans[0].text_content().strip()
-    else:
-      title_text = title_links[0].text_content().strip().split("\n")[-1].strip()
-    
-    stars_span = review_div.cssselect('span.a-icon-alt')[0]
-    stars_rating = float(stars_span.text_content().strip().split()[0])
-    body_span = review_div.cssselect('span[data-hook="review-body"]')[-1]
-    body_text = body_span.text_content().strip()
+    driver = uc.Chrome(options=options)
+    driver.get(url)
 
-    review_data.append({
-      "title": title_text,
-      "rating": stars_rating,
-      "text": body_text
-    })
+    reviews = []
 
-  return review_data
+    try:
+        WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.CLASS_NAME, 'review-text-content'))
+        )
+        review_elements = driver.find_elements(By.CLASS_NAME, 'review-text-content')
+
+        for element in review_elements:
+            review_text = element.text
+            reviews.append(review_text)
+
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
+    driver.quit()
+
+    return reviews
+
+def get_asin(url):
+    url_parts = url.replace('?', '/').split('/')
+    for part in url_parts:
+        if len(part) == 10 and part.startswith('B') and part.isupper():
+            return part
+    return ""
 
 if __name__ == "__main__":
   url = "https://www.amazon.com/ASUS-Gaming-GeForce-Graphics-DisplayPort/product-reviews/B0C7JYX6LN"
