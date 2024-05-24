@@ -1,15 +1,7 @@
-from flask import Flask, request, jsonify
-from flask_cors import CORS
 import undetected_chromedriver as uc
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-
-# Replace 'your_openai_api_key' with your actual OpenAI API key
-openai.api_key = 'your_openai_api_key'
-
-app = Flask(__name__)
-CORS(app)
 
 def get_reviews_from_page(url):
     options = uc.ChromeOptions()
