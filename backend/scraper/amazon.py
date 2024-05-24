@@ -1,6 +1,7 @@
 import httpx
 import pathlib
 import random
+import re
 import lxml.html
 
 import user_agents
@@ -47,6 +48,21 @@ def get_reviews(url):
 
   return review_data
 
+def convert_url(url, page_num=1, stars=5):
+  star_dict = {
+    1: "one_star",
+    2: "two_star",
+    3: "three_star",
+    4: "four_star",
+    5: "five_star"
+  }
+  star_str = star_dict[stars]
+  id_regex = r'B[A-Z0-9]+'
+  product_id = re.findall(id_regex, url)[0]
+  new_url = f"https://www.amazon.com/product-reviews/{product_id}/?ie=UTF8&reviewerType=all_reviews&pageNumber={page_num}&filterByStar={star_str}"
+  return new_url
+
 if __name__ == "__main__":
   url = "https://www.amazon.com/ASUS-Gaming-GeForce-Graphics-DisplayPort/product-reviews/B0C7JYX6LN"
-  print(get_reviews(url))
+  new_url = convert_url(url, stars=1)
+  print(get_reviews(new_url))
