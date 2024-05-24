@@ -3,13 +3,11 @@ import pathlib
 import random
 import lxml.html
 
-scraper_dir = pathlib.Path(__file__).resolve().parent
-ua_path = scraper_dir / "useragent.txt"
-user_agents = ua_path.read_text().split("\n")
+import user_agents
 
 def get_reviews(url):
   headers = {
-    "User-Agent": random.choice(user_agents),
+    "User-Agent": user_agents.get_random(),
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/jxl,image/webp,*/*;q=0.8",
     "Accept-Language": "en-US,en;q=0.5",
     "Accept-Encoding": "gzip, deflate, br",
