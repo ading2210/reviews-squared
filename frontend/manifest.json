@@ -12,13 +12,13 @@
   "content_scripts": [
     {
       "js": ["contentscript.js"],
-      "matches": ["https://www.amazon.com/*"]
+      "matches": ["https://www.amazon.com/*", "https://www.target.com/*", "https://www.bestbuy.com/*"]
     }
   ],
   "web_accessible_resources" : [
     {
       "resources" : ["index.html"],
-      "matches" : ["https://www.amazon.com/*"]
+      "matches" : ["https://www.amazon.com/*", "https://www.target.com/*", "https://www.bestbuy.com/*"]
     }
   ]
 }
