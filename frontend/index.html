@@ -30,7 +30,34 @@
     </div>
   </div>
   <div>
-    <p class="text-start">Loading...</p>
+    <p id="loading-text" class="text-start">Loading...</p>
   </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        const response = await fetch('/api/typeshiiiiii'); // replace with actual api endpoint
+        const data = await response.json();
+
+        const summary_element = document.getElementById("summary-text");
+        const satisfied_element = document.getElementById("sat-content");
+        const dissatisfied_element = document.getElementById("dissat-content");
+
+        summary_element.innerText = data.summary;
+
+        for (item of data.satisfied) {
+          satisfied_element.innerHTML += `<li class="list-group-item">${item}</li>`
+        }
+
+        for (item of data.dissatisfied) {
+          dissatisfied_element.innerHTML += `<li class="list-group-item">${item}</li>`
+        }
+
+        document.getElementById("loading-text").innerText = "";
+      } catch (error) {
+        console.error(error);
+      }
+    });
+  </script>
 </body>
 </html>
