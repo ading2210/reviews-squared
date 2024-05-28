@@ -3,8 +3,7 @@ import pathlib
 import random
 import re
 import lxml.html
-
-import user_agents
+from . import user_agents # added the dot bc it wasn't running otherewise
 
 def get_reviews(url):
   headers = {

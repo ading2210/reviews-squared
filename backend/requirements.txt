@@ -6,3 +6,4 @@ lxml
 httpx
 cssselect
 requests
+flask-cors
