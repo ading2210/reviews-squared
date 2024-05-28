@@ -20,5 +20,9 @@
       "resources" : ["index.html"],
       "matches" : ["https://www.amazon.com/*", "https://www.target.com/*", "https://www.bestbuy.com/*"]
     }
+  ],
+  "permissions": [
+    "http://localhost/*"
   ]
+  
 }
