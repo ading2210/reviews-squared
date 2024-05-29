@@ -21,24 +21,3 @@ if (target) {
   target = document.getElementById(ref_ids[host_name][1]);
   target.parentNode.insertBefore(iframe, target);
 }
-
-const url = location.href;
-
-
-
-// iframe.contentWindow.document.getElementById("summary-text") = "Saketh has no balls";
-
-// await fetch('0.0.0.0/api/reviews', {
-//   method: "POST",
-//   body: JSON.stringify({ url })
-// })
-// .then(response => response.json())
-// .then(data => async () => {
-//     await fetch('0.0.0.0/api/generate', {
-//     method: "POST",
-//     body: data
-// })
-// .then(res => {
-//     summary_element.innerText = res;
-// })
-// });
