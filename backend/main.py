@@ -31,6 +31,7 @@ def index():
   return "<p>the server is running</p>"
 
 @app.route("/api/generate", methods=["POST"])
+@cross_origin(origins=["chrome-extension://hpbbnemfahofgpnonbhkpkhgnmhnpbdn"])
 def api_generate():
   try:
     content = request.json
@@ -42,6 +43,7 @@ def api_generate():
     return jsonify({"error": str(e)}), 500
 
 @app.route("/api/reviews", methods=["POST"])
+@cross_origin()
 def reviews():
   data = request.get_json()
   url = data.get("url")
