@@ -9,6 +9,9 @@ const ref_ids = {
 const iframe = document.createElement("iframe");
 iframe.src = "chrome-extension://" + chrome.runtime.id + "/index.html" + "#" + path;
 iframe.style.width = "100%";
+iframe.style.width = "800px";
+iframe.style.height = "600px";
+iframe.style.border = "none";
 iframe.id = "reviews-squared";
 
 let target = document.getElementById(ref_ids[host_name][0])
