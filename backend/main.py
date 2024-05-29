@@ -6,7 +6,7 @@ from flask import Flask, request, make_response, jsonify
 from flask_cors import CORS, cross_origin
 app = Flask(__name__)
 cors = CORS(app)
-app.config['CORS_HEADERS'] = 'Content-Type'
+
 import scraper.amazon
 
 Settings.embed_model = OllamaEmbedding(model_name="nomic-embed-text")
@@ -31,16 +31,17 @@ def index():
   return "<p>the server is running</p>"
 
 @app.route("/api/generate", methods=["POST"])
-@cross_origin()
 def api_generate():
-  content = request.json
-  llm_response = generate(content["query"], content["documents"])
-  response = make_response(llm_response, 200)
-  response.mimetype = "text/plain"
-  return response
+  try:
+    content = request.json
+    llm_response = generate(content["query"], content["documents"])
+    response = make_response(llm_response, 200)
+    response.mimetype = "text/plain"
+    return response
+  except Exception as e:
+    return jsonify({"error": str(e)}), 500
 
 @app.route("/api/reviews", methods=["POST"])
-@cross_origin()
 def reviews():
   data = request.get_json()
   url = data.get("url")
