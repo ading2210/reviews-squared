@@ -31,7 +31,7 @@ def index():
   return "<p>the server is running</p>"
 
 @app.route("/api/generate", methods=["POST"])
-@cross_origin(origins=["chrome-extension://hpbbnemfahofgpnonbhkpkhgnmhnpbdn"])
+@cross_origin()
 def api_generate():
   try:
     content = request.json
