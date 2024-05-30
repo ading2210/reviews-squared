@@ -32,7 +32,7 @@ async function update() {
 
     const summary = await fetch('http://localhost:5000/api/generate', {
         method: "POST",
-        body: JSON.stringify({ summary_req }),
+        body: JSON.stringify(summary_req),
         headers: {
             "content-type": "application/json"
         }
