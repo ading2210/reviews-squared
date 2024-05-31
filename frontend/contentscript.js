@@ -3,15 +3,15 @@ const path = btoa(location.href);
 const ref_ids = {
   "www.amazon.com": ["#cr-product-insights-cards","#customer-reviews_feature_div"],
   "www.bestbuy.com": [null, "div[id^='user-generated-content-ratings-and-reviews']"],
-  "www.target.com": ["div:has(> div > h4[data-test='review-summary-title'])", "#reviewImages"]
+  "www.target.com": ["div:has(> div > h4[data-test='review-summary-title'])", "#reviewImages"],
+  "www.walmart.com": [null, "a[link-identifier='Generic Name'] + h1"]
 };
 let interval = null;
 
 function inject_frame() {
   const iframe = document.createElement("iframe");
   iframe.src = "chrome-extension://" + chrome.runtime.id + "/index.html" + "#" + path;
-  iframe.style.width = "100%";
-  iframe.style.width = "800px";
+  iframe.style.width = "max(100%, 800px)";
   iframe.style.height = "600px";
   iframe.style.border = "none";
   iframe.id = "reviews-squared";

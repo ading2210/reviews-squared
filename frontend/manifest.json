@@ -21,9 +21,7 @@
       "matches" : ["https://www.amazon.com/*", "https://www.target.com/*", "https://www.bestbuy.com/*"]
     }
   ],
-  "permissions": [
-    "https://*/*",
-    "http://*/*"
-  ]
-  
+  "host_permissions": [
+    "<all_urls>"
+  ] 
 }

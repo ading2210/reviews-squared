@@ -5,6 +5,5 @@ flask
 lxml
 httpx
 cssselect
-requests
 flask-cors
 curl_cffi

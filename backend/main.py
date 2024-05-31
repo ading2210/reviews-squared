@@ -15,6 +15,7 @@ cors = CORS(app)
 import scraper.amazon
 import scraper.bestbuy
 import scraper.target
+import scraper.walmart
 
 Settings.embed_model = OllamaEmbedding(model_name="nomic-embed-text")
 Settings.llm = Ollama(model="phi3:3.8b-mini-128k-instruct-q4_0", request_timeout=360.0)
@@ -80,7 +81,8 @@ def reviews():
     sites = {
       "www.amazon.com": scraper.amazon,
       "www.bestbuy.com": scraper.bestbuy,
-      "www.target.com": scraper.target
+      "www.target.com": scraper.target,
+      "www.walmart.com": scraper.walmart
     }
     domain = urlparse(url).netloc
     site = sites[domain]
