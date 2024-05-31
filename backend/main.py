@@ -1,13 +1,18 @@
+from urllib.parse import urlparse
+import traceback
+
 from llama_index.core import VectorStoreIndex, Document, Settings
 from llama_index.embeddings.ollama import OllamaEmbedding
 from llama_index.llms.ollama import Ollama
 
 from flask import Flask, request, make_response, jsonify
-from flask_cors import CORS, cross_origin
+from flask_cors import CORS
 app = Flask(__name__)
 cors = CORS(app)
 
 import scraper.amazon
+import scraper.bestbuy
+import scraper.target
 
 Settings.embed_model = OllamaEmbedding(model_name="nomic-embed-text")
 Settings.llm = Ollama(model="llama3:instruct", request_timeout=360.0)
@@ -26,6 +31,12 @@ def generate(query, reviews):
   response = query_engine.query(query)
   return str(response) #note: possible to get sources used from the response object
 
+def handle_error(error):
+  output = "".join(traceback.format_exception(error))
+  response = make_response(output, 500)
+  response.mimetype = "text/plain"
+  return response
+
 @app.route("/")
 def index():
   return "<p>the server is running</p>"
@@ -39,20 +50,33 @@ def api_generate():
     response.mimetype = "text/plain"
     return response
   except Exception as e:
-    return jsonify({"error": str(e)}), 500
+    return handle_error(e)
 
 @app.route("/api/reviews", methods=["POST"])
 def reviews():
-  data = request.get_json()
-  url = data.get("url")
-  if not url:
-    return jsonify({"error": "URL is required"}), 400
-
   try:
-    reviews_data = scraper.amazon.get_reviews(url)
-    return jsonify({"reviews": reviews_data})
+    data = request.get_json()
+    url = data.get("url")
+    page = int(data.get("page") or 1)
+    stars = int(data.get("stars") or 5)
+
+    if not url:
+      return jsonify({"error": "URL is required"}), 400
+
+    sites = {
+      "www.amazon.com": scraper.amazon,
+      "www.bestbuy.com": scraper.bestbuy,
+      "www.target.com": scraper.target
+    }
+    domain = urlparse(url).netloc
+    site = sites[domain]
+
+    new_url = site.convert_url(url, page_num=page, stars=stars)
+    output = site.get_reviews(new_url)
+    return jsonify(output)
+
   except Exception as e:
-    return jsonify({"error": str(e)}), 500
+    return handle_error(e)
 
 if __name__ == "__main__":  
   print("starting flask")

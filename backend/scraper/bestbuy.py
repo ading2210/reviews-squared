@@ -1,7 +1,7 @@
 import httpx
 import lxml.html
 
-import user_agents
+from . import user_agents
 
 
 def get_reviews(url):
