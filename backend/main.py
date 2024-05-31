@@ -8,6 +8,7 @@ from llama_index.llms.ollama import Ollama
 
 from flask import Flask, request, make_response, jsonify
 from flask_cors import CORS, cross_origin
+from werkzeug.middleware.proxy_fix import ProxyFix
 app = Flask(__name__)
 cors = CORS(app)
 
@@ -45,6 +46,7 @@ def generate(queries, reviews):
 
 def handle_error(error):
   output = "".join(traceback.format_exception(error))
+  print(output)
   response = make_response(output, 500)
   response.mimetype = "text/plain"
   return response
@@ -64,7 +66,7 @@ def api_generate():
     return handle_error(e)
 
 @app.route("/api/reviews", methods=["POST"])
-@cross_origin()
+@cross_origin(origins=["*"])
 def reviews():
   try:
     data = request.get_json()
@@ -84,8 +86,15 @@ def reviews():
     site = sites[domain]
 
     new_url = site.convert_url(url, page_num=page, stars=stars)
-    output = site.get_reviews(new_url)
-    return jsonify(output)
+    output = ""
+    for i in range(0, 5):
+      try:
+        output = site.get_reviews(new_url)
+        return jsonify(output)
+      except Exception as e:
+        print(f"retrying review fetch ({i})")
+        
+    return jsonify([])
 
   except Exception as e:
     return handle_error(e)

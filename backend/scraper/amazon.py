@@ -21,6 +21,7 @@ def get_reviews(url):
   }
 
   response = httpx.get(url, headers=headers)
+  response.raise_for_status()
   document = lxml.html.fromstring(response.content)
   review_divs = document.cssselect('div[id^="customer_review-"]')
   review_data = []
