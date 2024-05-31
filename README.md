@@ -1,5 +1,31 @@
-# Reviews²
+Reviews Squared
+Reviews Squared is a Chrome extension that simplifies the process of reading and summarizing reviews on Amazon, Best Buy, and Target product pages. This tool fetches reviews and provides a concise summary within the extension's popup, making it easier for you to get quick insights into product feedback.
 
-backend goes in /backend directory
+Features
+Automatic Review Fetching: Fetches reviews from Amazon, Best Buy, and Target product pages.
+Summarization: Provides a concise summary of the fetched reviews, saving you time and effort.
+User-Friendly Interface: Easy-to-use Chrome extension with a clean and intuitive interface.
+Customization: Allows you to configure settings according to your preferences.
+Installation
+Clone this repository:
+bash
+Copy code
+git clone https://github.com/ading2210/reviews-squared.git
+Open Chrome and navigate to chrome://extensions/.
+Enable Developer mode by clicking the toggle switch in the top right corner.
+Click the "Load unpacked" button and select the cloned repository directory.
+Usage
+Navigate to an Amazon, Best Buy, or Target product page.
+Click on the Reviews Squared extension icon in the Chrome toolbar.
+The extension will automatically fetch and summarize the reviews for the product.
+View the summary in the extension popup.
+Configuration
+You can customize the settings of Reviews Squared by clicking on the settings icon within the extension popup. Here, you can configure various options to suit your needs.
 
-frontend goes in /frontend directory
+Contributing
+Contributions are welcome! If you have any suggestions, bug reports, or feature requests, please open an issue or submit a pull request.
+
+License
+This project is licensed under the MIT License.
+
+Enjoy using Reviews Squared to enhance your shopping experience by quickly accessing summarized reviews from Amazon, Best Buy, and Target!
