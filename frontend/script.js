@@ -8,7 +8,7 @@ const summary_element = document.getElementById("summary-text");
 const satisfied_element = document.getElementById("sat-content");
 const dissatisfied_element = document.getElementById("dissat-content");
 
-const API_URL = "http://localhost:5000/";
+const API_URL = "https://reviews.ading.dev";
 
 async function fetch_reviews(url, page = 1, stars = 5) {
     let r = await fetch(API_URL + "/api/reviews", {
