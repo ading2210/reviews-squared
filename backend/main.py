@@ -1,5 +1,6 @@
 from urllib.parse import urlparse
 import traceback
+import threading
 
 from llama_index.core import VectorStoreIndex, Document, Settings
 from llama_index.embeddings.ollama import OllamaEmbedding
@@ -15,10 +16,10 @@ import scraper.bestbuy
 import scraper.target
 
 Settings.embed_model = OllamaEmbedding(model_name="nomic-embed-text")
-Settings.llm = Ollama(model="llama3:instruct", request_timeout=360.0)
+Settings.llm = Ollama(model="phi3:3.8b-mini-128k-instruct-q4_0", request_timeout=360.0)
 app = Flask(__name__)
 
-def generate(query, reviews):
+def generate(queries, reviews):
   print("creating documents")
   documents = []
   for review in reviews:
@@ -28,8 +29,19 @@ def generate(query, reviews):
 
   print("running query")
   query_engine = index.as_query_engine()
-  response = query_engine.query(query)
-  return str(response) #note: possible to get sources used from the response object
+  responses = [None] * len(queries)
+  threads = []
+  def thread_runner(index, query):
+    responses[index] = str(query_engine.query(query)).strip()
+    print(responses[index])
+  for i, query in enumerate(queries):
+    t = threading.Thread(target=thread_runner, args=(i, query), daemon=True)
+    t.start()
+    threads.append(t)
+  for t in threads:
+    t.join()
+
+  return responses #note: possible to get sources used from the response object
 
 def handle_error(error):
   output = "".join(traceback.format_exception(error))
@@ -42,14 +54,12 @@ def index():
   return "<p>the server is running</p>"
 
 @app.route("/api/generate", methods=["POST"])
-@cross_origin(origins=["chrome-extension://hpbbnemfahofgpnonbhkpkhgnmhnpbdn"])
+@cross_origin(origins=["*"])
 def api_generate():
   try:
     content = request.json
     llm_response = generate(content["query"], content["documents"])
-    response = make_response(llm_response, 200)
-    response.mimetype = "text/plain"
-    return response
+    return jsonify(llm_response), 200
   except Exception as e:
     return handle_error(e)
 
@@ -82,4 +92,4 @@ def reviews():
 
 if __name__ == "__main__":  
   print("starting flask")
-  app.run(host= "0.0.0.0", debug=True)
+  app.run(host= "0.0.0.0", debug=True, threaded=True)
