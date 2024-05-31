@@ -1,56 +1,68 @@
 const url = atob(location.hash.substring(1));
-const summary_query = "Create a paragraph summary of the following reviews. Talk about the good and the bad.";
-const satisfied_query = "Make a short list of things that customers liked about the product. Each element should be about 3-5 words and separated by a comma and space (, )";
-const dissatisfied_query = "Make a short list of things that customers disliked about the product. Each element should be about 3-5 words and separated by a comma and space (, )";
+const query = [
+    "Create a paragraph summary of the following reviews. Talk about the good and the bad.",
+    "Make a short list of things that customers liked about the product. Each element should be about 3-5 words and separated by a comma and space (, )",
+    "Make a short list of things that customers disliked about the product. Each element should be about 3-5 words and separated by a comma and space (, )"
+];
 const summary_element = document.getElementById("summary-text");
 const satisfied_element = document.getElementById("sat-content");
 const dissatisfied_element = document.getElementById("dissat-content");
 
 async function update() {
-    const r1 = await fetch('http://localhost:5000/api/reviews', {
+    const reviews = [];
+
+    const [
+      five_star1,
+      five_star2,
+      one_star1,
+      one_star2
+    ] = await Promise.all([
+      fetch("http://localhost:5000/api/reviews", {
         method: "POST",
-        body: JSON.stringify({ url }),
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ url, page: 1, stars: 5 })
+      }).then(res => res.json()),
+  
+      fetch("http://localhost:5000/api/reviews", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ url, page: 2, stars: 5 })
+      }).then(res => res.json()),
+  
+      fetch("http://localhost:5000/api/reviews", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ url, page: 1, stars: 1 })
+      }).then(res => res.json()),
+  
+      fetch("http://localhost:5000/api/reviews", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ url, page: 2, stars: 1 })
+      }).then(res => res.json())
+    ]);
+  
+    reviews.push(...five_star1, ...five_star2, ...one_star1, ...one_star2);
+
+    const req1 = {
+        query: query,
+        documents: reviews
+    }
+    const [summary, satisfied, dissatisfied] = await fetch("http://localhost:5000/api/generate", {
+        method: "POST",
+        body: JSON.stringify(req1),
         headers: {
             "content-type": "application/json"
         }
     });
-
-    const summary_req = {
-        query: summary_query,
-        documents: r1
-    };
-    const satisfied_req = {
-        query: satisfied_query,
-        documents: r1
-    };
-    const dissatisfied_req = {
-        query: dissatisfied_query,
-        documents: r1
-    };
-
-    const [summary, satisfied, dissatisfied] = await Promise.all([
-        fetch('http://localhost:5000/api/generate', {
-            method: "POST",
-            body: JSON.stringify(summary_req),
-            headers: {
-                "content-type": "application/json"
-            }
-        }).then(response => response.text()),
-        fetch('http://localhost:5000/api/generate', {
-            method: "POST",
-            body: JSON.stringify(satisfied_req),
-            headers: {
-                "content-type": "application/json"
-            }
-        }).then(response => response.text()),
-        fetch('http://localhost:5000/api/generate', {
-            method: "POST",
-            body: JSON.stringify(dissatisfied_req),
-            headers: {
-                "content-type": "application/json"
-            }
-        }).then(response => response.text())
-    ]);
 
     const satisfiedList = satisfied.split(', ');
     const dissatisfiedList = dissatisfied.split(', ');
