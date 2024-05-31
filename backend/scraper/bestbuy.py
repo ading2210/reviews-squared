@@ -3,6 +3,11 @@ import lxml.html
 
 from . import user_agents
 
+def convert_url(url, page_num = 1, stars = 5):
+  url = url.replace("bestbuy.com/site", "bestbuy.com/site/reviews")
+  url = url.replace(".p", "")
+  url += "&rating=" + str(stars) + "&page=" + str(page_num)
+  return url
 
 def get_reviews(url):
   headers = {
@@ -42,5 +47,7 @@ def get_reviews(url):
   return review_data
 
 if __name__ == "__main__":
-  url = "https://www.bestbuy.com/site/reviews/gigabyte-nvidia-geforce-rtx-3060-12gb-gddr6-pci-express-4-0-graphics-card-black/6468931"
+  url = "https://www.bestbuy.com/site/gigabyte-nvidia-geforce-rtx-3060-12gb-gddr6-pci-express-4-0-graphics-card-black/6468931.p?skuId=6468931"
+  url = convert_url(url)
+#  print(url)
   print(get_reviews(url))
