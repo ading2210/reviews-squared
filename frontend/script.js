@@ -14,20 +14,18 @@ async function update() {
             "content-type": "application/json"
         }
     });
-    let reviews = await r1.json();
-    reviews = reviews.reviews;
 
     const summary_req = {
         query: summary_query,
-        documents: reviews
+        documents: r1
     };
     const satisfied_req = {
         query: satisfied_query,
-        documents: reviews
+        documents: r1
     };
     const dissatisfied_req = {
         query: dissatisfied_query,
-        documents: reviews
+        documents: r1
     }
 
     const summary = await fetch('http://localhost:5000/api/generate', {
