@@ -4,23 +4,11 @@ from urllib.parse import urlencode
 
 import lxml.html
 import httpx
+from curl_cffi import requests
 from . import user_agents
 
 def get_reviews(url):
-  headers = {
-    "User-Agent": user_agents.get_random(),
-    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/jxl,image/webp,*/*;q=0.8",
-    "Accept-Language": "en-US,en;q=0.5",
-    "Accept-Encoding": "gzip, deflate, br",
-    "DNT": "1",
-    "Connection": "keep-alive",
-    "Upgrade-Insecure-Requests": "1",
-    "Sec-Fetch-Dest": "document",
-    "Sec-Fetch-Mode": "navigate",
-    "Sec-Fetch-Site": "none",
-    "Sec-Fetch-User": "?1",
-  }
-  response = httpx.get(url, headers=headers)
+  response = requests.get(url, impersonate=user_agents.get_fingerprint())
   response.raise_for_status()
   data_json = response.json()
 
@@ -35,20 +23,7 @@ def get_reviews(url):
   return review_data
 
 def convert_url(url, page_num=1, stars=5):
-  headers = {
-    "User-Agent": user_agents.get_random(),
-    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/jxl,image/webp,*/*;q=0.8",
-    "Accept-Language": "en-US,en;q=0.5",
-    "Accept-Encoding": "gzip, deflate, br",
-    "DNT": "1",
-    "Connection": "keep-alive",
-    "Upgrade-Insecure-Requests": "1",
-    "Sec-Fetch-Dest": "document",
-    "Sec-Fetch-Mode": "navigate",
-    "Sec-Fetch-Site": "none",
-    "Sec-Fetch-User": "?1",
-  }
-  response = httpx.get(url, headers=headers)
+  response = requests.get(url, impersonate=user_agents.get_fingerprint())
   response.raise_for_status()
   key_regex = r'apiKey\\":\\"([0-9a-f]+?)\\"'
   api_key = re.findall(key_regex, response.text)[0]

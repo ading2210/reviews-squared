@@ -18,7 +18,7 @@ import scraper.target
 import scraper.walmart
 
 Settings.embed_model = OllamaEmbedding(model_name="nomic-embed-text")
-Settings.llm = Ollama(model="phi3:3.8b-mini-128k-instruct-q4_0", request_timeout=360.0)
+Settings.llm = Ollama(model="phi3:3.8b-mini-4k-instruct-q5_K_M", request_timeout=360.0)
 app = Flask(__name__)
 
 def generate(queries, reviews):
@@ -94,6 +94,7 @@ def reviews():
         output = site.get_reviews(new_url)
         return jsonify(output)
       except Exception as e:
+        print("".join(traceback.format_exception(e)))
         print(f"retrying review fetch ({i})")
         
     return jsonify([])

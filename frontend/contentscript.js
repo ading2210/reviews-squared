@@ -1,20 +1,21 @@
-const host_name = location.hostname;
-const path = btoa(location.href);
 const ref_ids = {
   "www.amazon.com": ["#cr-product-insights-cards","#customer-reviews_feature_div"],
   "www.bestbuy.com": [null, "div[id^='user-generated-content-ratings-and-reviews']"],
   "www.target.com": ["div:has(> div > h4[data-test='review-summary-title'])", "#reviewImages"],
-  "www.walmart.com": [null, "a[link-identifier='Generic Name'] + h1"]
+  "www.walmart.com": [null, "div[class='mb4 overflow-auto'] "]
 };
 let interval = null;
 
+const iframe = document.createElement("iframe");
+iframe.style.width = "max(100%, 800px)";
+iframe.style.height = "600px";
+iframe.style.border = "none";
+iframe.id = "reviews-squared";
+
 function inject_frame() {
-  const iframe = document.createElement("iframe");
+  const host_name = location.hostname;
+  const path = btoa(location.href);
   iframe.src = "chrome-extension://" + chrome.runtime.id + "/index.html" + "#" + path;
-  iframe.style.width = "max(100%, 800px)";
-  iframe.style.height = "600px";
-  iframe.style.border = "none";
-  iframe.id = "reviews-squared";
   
   if (!ref_ids[host_name]) {
     return;

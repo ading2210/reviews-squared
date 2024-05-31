@@ -4,30 +4,10 @@ import re
 
 import lxml.html
 from curl_cffi import requests
-
-fingerprints = [
-  "chrome99",
-  "chrome100",
-  "chrome101",
-  "chrome104",
-  "chrome107",
-  "chrome110",
-  "chrome116",
-  "chrome119",
-  "chrome120",
-  "chrome99_android",
-  "edge99",
-  "edge101",
-  "safari15_3",
-  "safari15_5",
-  "safari17_0",
-  "safari17_2_ios"
-]
+from . import user_agents
 
 def get_reviews(url):
-  global fingerprints
-  fingerprint = random.choice(fingerprints)
-  response = requests.get(url, impersonate=fingerprint)
+  response = requests.get(url, impersonate=user_agents.get_fingerprint())
   response.raise_for_status()
 
   document = lxml.html.fromstring(response.content)
