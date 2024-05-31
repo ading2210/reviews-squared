@@ -63,15 +63,7 @@ async function update() {
             "content-type": "application/json"
         }
     });
-    let reviews = await r1.json();
-
-    const req = {
-        query: [summary_query, satisfied_query, dissatisfied_query],
-        documents: reviews
-    };
-
     
-
     const satisfiedList = satisfied.split(', ');
     const dissatisfiedList = dissatisfied.split(', ');
 
