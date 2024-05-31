@@ -11,12 +11,17 @@ const dissatisfied_element = document.getElementById("dissat-content");
 const API_URL = "https://reviews.ading.dev";
 
 async function fetch_reviews(url, page = 1, stars = 5) {
+    const req = {
+        url: url,
+        page: page,
+        stars: stars
+    };
     let r = await fetch(API_URL + "/api/reviews", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({url, page, stars})
+        body: JSON.stringify(req)
     });
     return await r.json();
 }
@@ -37,13 +42,15 @@ async function update() {
         query: queries,
         documents: reviews
     }
-    const [summary, satisfied, dissatisfied] = await fetch(API_URL + "/api/generate", {
+    const r = await fetch(API_URL + "/api/generate", {
         method: "POST",
         body: JSON.stringify(req1),
         headers: {
             "content-type": "application/json"
         }
     });
+
+    const [summary, satisfied, dissatisfied] = await r.json();
     
     const satisfiedList = satisfied.split(', ');
     const dissatisfiedList = dissatisfied.split(', ');
