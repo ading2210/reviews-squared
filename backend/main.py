@@ -19,7 +19,7 @@ def generate(query, reviews):
   for review in reviews:
     text = review.pop("text")
     documents.append(Document(text=text, metadata=review))
-  index = VectorStoreIndex.from_documents(documents)
+  index = VectorStoreIndex.from_documents(documents) # p sure the problem is here - Anwar =)
 
   print("running query")
   query_engine = index.as_query_engine()
@@ -31,7 +31,7 @@ def index():
   return "<p>the server is running</p>"
 
 @app.route("/api/generate", methods=["POST"])
-@cross_origin()
+@cross_origin(origins=["chrome-extension://hpbbnemfahofgpnonbhkpkhgnmhnpbdn"])
 def api_generate():
   try:
     content = request.json
