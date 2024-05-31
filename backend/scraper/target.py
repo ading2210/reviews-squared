@@ -1,49 +1,80 @@
-import requests
+import re
+import json
+from urllib.parse import urlencode
 
-def get_page_source(url):
-  try:
-    response = requests.get(url)
-    response.raise_for_status()  # Check if the request was successful
-    return response.text
-  except requests.exceptions.RequestException as e:
-    print(f"An error occurred: {e}")
-    return None
+import lxml.html
+import httpx
+from . import user_agents
 
 def get_reviews(url):
-  delim = "\\\"text\\\":\\\""
-  source_code = get_page_source(url)
-  if source_code is None:
-    return []
+  headers = {
+    "User-Agent": user_agents.get_random(),
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/jxl,image/webp,*/*;q=0.8",
+    "Accept-Language": "en-US,en;q=0.5",
+    "Accept-Encoding": "gzip, deflate, br",
+    "DNT": "1",
+    "Connection": "keep-alive",
+    "Upgrade-Insecure-Requests": "1",
+    "Sec-Fetch-Dest": "document",
+    "Sec-Fetch-Mode": "navigate",
+    "Sec-Fetch-Site": "none",
+    "Sec-Fetch-User": "?1",
+  }
+  response = httpx.get(url, headers=headers)
+  response.raise_for_status()
+  data_json = response.json()
 
-  source_code_parts = source_code.split(delim)
-  reviews = []
+  review_data = []
+  for result in data_json["reviews"]["results"]:
+    review_data.append({
+      "title": result.get("title") or "",
+      "rating": result["Rating"],
+      "text": result.get("text") or ""
+    })
 
-  for part in source_code_parts[1:]:
-    try:
-      # Extract review text
-      review_text = part.split('\\\",')[0]
-      
-      # Extract title
-      title_part = part.split('title\\\":\\\"')
-      title = title_part[1].split("\\\"")[0]
-      
-      # Extract rating
-      rating_part = part.split('value\\\":')
-      rating = rating_part[1][0]
+  return review_data
 
-      reviews.append({
-        "title": title,
-        "rating": rating,
-        "text": review_text
-      })
-    except (IndexError, ValueError) as e:
-      print(f"An error occurred while parsing review: {e}")
-      continue
+def convert_url(url, page_num=1, stars=5):
+  headers = {
+    "User-Agent": user_agents.get_random(),
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/jxl,image/webp,*/*;q=0.8",
+    "Accept-Language": "en-US,en;q=0.5",
+    "Accept-Encoding": "gzip, deflate, br",
+    "DNT": "1",
+    "Connection": "keep-alive",
+    "Upgrade-Insecure-Requests": "1",
+    "Sec-Fetch-Dest": "document",
+    "Sec-Fetch-Mode": "navigate",
+    "Sec-Fetch-Site": "none",
+    "Sec-Fetch-User": "?1",
+  }
+  response = httpx.get(url, headers=headers)
+  response.raise_for_status()
+  key_regex = r'apiKey\\":\\"([0-9a-f]+?)\\"'
+  api_key = re.findall(key_regex, response.text)[0]
 
-  return reviews
+  id_regex = r'A-(\d+)'
+  product_id = re.findall(id_regex, url)[0]
+
+  query_params = urlencode({
+    "key": api_key,
+    "hasOnlyPhotos": "false",
+    "includes": "reviews",
+    "page": str(page_num),
+    "entity": "",
+    "ratingFilter": "rating_" + str(stars),
+    "reviewedId": str(product_id),
+    "reviewType": "PRODUCT",
+    "size": 10,
+    "sortBy": "most_recent",
+    "verifiedOnly": "false"
+  })
+  new_url = "https://r2d2.target.com/ggc/v2/summary?" + query_params
+
+  return new_url
 
 if __name__ == "__main__":
-  url = "https://www.target.com/p/steakhouse-seasoned-beef-patties-frozen-3lbs-good-38-gather-8482/-/A-16781984#lnk=sametab"
-  reviews = extract_reviews(url)
-  for review in reviews:
-    print(review)
+  url = "https://www.target.com/p/doritos-nacho-cheese-flavored-tortilla-chips-14-5oz/-/A-13319564"
+  new_url = convert_url(url, stars=1)
+  print(new_url)
+  print(get_reviews(new_url))

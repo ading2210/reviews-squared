@@ -85,10 +85,10 @@ def reviews():
     domain = urlparse(url).netloc
     site = sites[domain]
 
-    new_url = site.convert_url(url, page_num=page, stars=stars)
     output = ""
-    for i in range(0, 5):
+    for i in range(0, 3):
       try:
+        new_url = site.convert_url(url, page_num=page, stars=stars)
         output = site.get_reviews(new_url)
         return jsonify(output)
       except Exception as e:

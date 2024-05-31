@@ -30,11 +30,11 @@ async function update() {
     const reviews_seperate = await Promise.all([
         fetch_reviews(url, 1, 5),
         fetch_reviews(url, 2, 5),
+        fetch_reviews(url, 3, 5),
         fetch_reviews(url, 1, 4),
         fetch_reviews(url, 1, 3),
         fetch_reviews(url, 1, 2),
         fetch_reviews(url, 1, 1),
-        fetch_reviews(url, 2, 1),
     ]);
     const reviews = reviews_seperate.flat(1);
 
