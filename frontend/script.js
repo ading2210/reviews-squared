@@ -15,7 +15,6 @@ async function update() {
         }
     });
     let reviews = await r1.json();
-    reviews = reviews.reviews;
 
     const summary_req = {
         query: summary_query,
