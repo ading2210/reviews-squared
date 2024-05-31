@@ -1,6 +1,5 @@
 const url = atob(location.hash.substring(1));
-const api_url = "http://localhost:5000/api/reviews"
-const query = [
+const queries = [
     "Create a paragraph summary of the following reviews. Talk about the good and the bad.",
     "Make a short list of things that customers liked about the product. Each element should be about 3-5 words and separated by a comma and space (, )",
     "Make a short list of things that customers disliked about the product. Each element should be about 3-5 words and separated by a comma and space (, )"
@@ -9,40 +8,43 @@ const summary_element = document.getElementById("summary-text");
 const satisfied_element = document.getElementById("sat-content");
 const dissatisfied_element = document.getElementById("dissat-content");
 
-async function fetchReviews(page, star) {
-    return await fetch(api_url, {
+const API_URL = "http://localhost:5000/";
+
+async function fetch_reviews(url, page = 1, stars = 5) {
+    let r = await fetch(API_URL + "/api/reviews", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ url, page: page, stars: star })
-      }).then(res => res.json());
+        body: JSON.stringify({url, page, stars})
+    });
+    return await r.json();
 }
 
 async function update() {
-    const reviews = [];
-
-    const [five_star1, five_star2, one_star1, one_star2] = await Promise.all([
-      fetchReviews(1, 5),
-      fetchReviews(2, 5),
-      fetchReviews(1, 1),
-      fetchReviews(2, 1)
+    const reviews_seperate = await Promise.all([
+        fetch_reviews(url, 1, 5),
+        fetch_reviews(url, 2, 5),
+        fetch_reviews(url, 1, 4),
+        fetch_reviews(url, 1, 3),
+        fetch_reviews(url, 1, 2),
+        fetch_reviews(url, 1, 1),
+        fetch_reviews(url, 2, 1),
     ]);
-  
-    reviews.push(...five_star1, ...five_star2, ...one_star1, ...one_star2);
+    const reviews = reviews_seperate.flat(1);
 
     const req1 = {
-        query: query,
+        query: queries,
         documents: reviews
     }
-    const [summary, satisfied, dissatisfied] = await fetch("http://localhost:5000/api/generate", {
+    const [summary, satisfied, dissatisfied] = await fetch(API_URL + "/api/generate", {
         method: "POST",
         body: JSON.stringify(req1),
         headers: {
             "content-type": "application/json"
         }
     });
-
+    
     const satisfiedList = satisfied.split(', ');
     const dissatisfiedList = dissatisfied.split(', ');
 
