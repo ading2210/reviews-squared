@@ -22,7 +22,8 @@
     }
   ],
   "permissions": [
-    "http://localhost:*"
+    "https://*/*",
+    "http://*/*"
   ]
   
 }

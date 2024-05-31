@@ -6,7 +6,7 @@ from llama_index.embeddings.ollama import OllamaEmbedding
 from llama_index.llms.ollama import Ollama
 
 from flask import Flask, request, make_response, jsonify
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 app = Flask(__name__)
 cors = CORS(app)
 
