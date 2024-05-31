@@ -1,8 +1,8 @@
 const url = atob(location.hash.substring(1));
 const queries = [
-    "Create a paragraph summary of the following reviews. Talk about the good and the bad.",
-    "Make a short list of things that customers liked about the product. Each element should be about 3-5 words and separated by a comma and space (, )",
-    "Make a short list of things that customers disliked about the product. Each element should be about 3-5 words and separated by a comma and space (, )"
+    "Don't include any irrelevant information. Create a paragraph summary of the following reviews. Talk about the 2 good and 2 bad. Limit it to 3-4 sentences",
+    "Don't include any irrelevant information. Make a short list of things that customers liked about the product. Each element should be about 3-5 words and separated by a new line, no bullet points",
+    "Don't include any irrelevant information. Make a short list of things that customers disliked about the product. Each element should be about 3-5 words and separated by a new line, no bullet points"
 ];
 const summary_element = document.getElementById("summary-text");
 const satisfied_element = document.getElementById("sat-content");
@@ -52,8 +52,8 @@ async function update() {
 
     const [summary, satisfied, dissatisfied] = await r.json();
     
-    const satisfiedList = satisfied.split(', ');
-    const dissatisfiedList = dissatisfied.split(', ');
+    const satisfiedList = satisfied.split('\n');
+    const dissatisfiedList = dissatisfied.split('\n');
 
     summary_element.innerText = summary;
     satisfied_element.innerHTML = satisfiedList.map(item => `<li class="list-group-item">${item}</li>`).join('');

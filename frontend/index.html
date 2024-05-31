@@ -8,27 +8,27 @@
   <title>Reviews Squared</title>
 </head>
 <body>
-  <div class="text-start">
-    <img src="./imgs/Reviews.png">
+  <div class="d-flex align-items-center mb-3" style="justify-content: left;">
+    <img src="./imgs/Reviews.png" style="margin-right: 1rem;">
+    <h1 class="font-weight-bold" style="margin: 0;">Review Analysis</h1>
   </div>
+  
   <div class="progress">
     <div class="progress-bar bg-danger" role="progressbar" style="width: 80%;" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
   </div>
   <div class="container text-center">
     <div class="row align-items-start">
-      <div class="col">
-        <p class="text-center lead">Summary:</p>
+      <div class="col" style="border-right: 1px solid #dee2e6; padding: 1rem;">
+        <h6 class="text-center">Summary:</h6>
         <p class="text-start" id="summary-text"></p>
       </div>
-      <div class="col">
-        <p class="text-center lead">Satisfied Customers Said:</p>
-        <ul class="list-group" id="sat-content">
-        </ul>
+      <div class="col" style="border-right: 1px solid #dee2e6; padding: 1rem;">
+        <h6 class="text-center">Satisfied Customers Said:</h6>
+        <ul class="list-group" id="sat-content"></ul>
       </div>
-      <div class="col">
-        <p class="text-center lead">Dissatisfied Customers Said:</p>
-        <ul class="list-group" id="dissat-content">
-        </ul>
+      <div class="col" style="padding: 1rem;">
+        <h6 class="text-center">Dissatisfied Customers Said:</h6>
+        <ul class="list-group" id="dissat-content"></ul>
       </div>
     </div>
   </div>
